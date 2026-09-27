@@ -24,6 +24,7 @@
 6. [Section 5: CI/CD Pipeline (GitHub Actions)](#-section-5-cicd-pipeline-github-actions)
 7. [Section 6: Reproducibility & Versioning Strategy](#-section-6-reproducibility--versioning-strategy)
 8. [Section 7: Quickstart & Verification Guide](#-section-7-quickstart--verification-guide)
+9. [Section 8: Visual Evidences & Operational Screenshots](#-section-8-visual-evidences--operational-screenshots)
 
 ---
 
@@ -283,3 +284,68 @@ docker compose ps
 - **Grafana Dashboards:** [http://localhost:3000](http://localhost:3000) *(User: `admin`, Password: `admin`)*
 - **MinIO Console:** [http://localhost:9001](http://localhost:9001) *(User: `minioadmin`, Password: `miniopassword`)*
 - **Airflow Webserver:** [http://localhost:8080](http://localhost:8080)
+
+---
+
+## 📸 Section 8: Visual Evidences & Operational Screenshots
+
+All live service components have been rigorously verified and captured in the [`evidences/`](evidences/) directory:
+
+### 1. Model Serving REST API (FastAPI Swagger Docs)
+FastAPI production inference service documentation displaying health checks, single prediction (`/predict`), high-throughput batch prediction (`/predict/batch`), Prometheus `/metrics`, and `/model/info`.
+![FastAPI Swagger UI](evidences/01_fastapi_swagger_docs.png)
+
+---
+
+### 2. Evidently AI Drift Monitoring Service (Swagger Docs)
+Independent microservice dedicated to statistical drift calculation, reference baseline management, production traffic capturing, and automated HTML/JSON report generation.
+![Evidently Service Docs](evidences/02_evidently_service_docs.png)
+
+---
+
+### 3. MLflow Experiment Tracking Runs Table
+Complete 10-model experiment matrix logged to the remote PostgreSQL backend and MinIO S3 artifact store, capturing hyperparameters, durations, and validation metrics ($F_1$-score, Accuracy, ROC-AUC).
+![MLflow Experiments](evidences/03_mlflow_experiments.png)
+
+---
+
+### 4. MLflow Model Registry & Stage Promotion
+Centralized model governance showing registered versions of `wine_quality_model` and the champion model promoted to the `@production` alias.
+![MLflow Model Registry](evidences/04_mlflow_model_registry.png)
+
+---
+
+### 5. Prometheus Scraping Targets
+Prometheus monitoring status showing all endpoints actively and healthily scraped (`api:8000`, `evidently:8001`, `prometheus:9090` in `UP` state).
+![Prometheus Targets](evidences/05_prometheus_targets.png)
+
+---
+
+### 6. Prometheus Live Production Metrics
+Real-time time-series metrics query confirming production inferences tracked via `model_predictions_total` with service, environment, and model version labels.
+![Prometheus Metrics](evidences/06_prometheus_metrics.png)
+
+---
+
+### 7. Evidently AI Interactive Drift Report
+Interactive report generated after detecting feature distribution divergence (e.g. alcohol, density, chlorides, sulphates) using Wasserstein distance and Kolmogorov-Smirnov statistical tests.
+![Evidently Drift Report](evidences/07_evidently_drift_report.png)
+
+---
+
+### 8. MinIO High-Performance S3 Storage Console
+S3-compatible object storage managing MLflow run artifacts, logged models, and serialized pipeline transformers.
+![MinIO Console](evidences/08_minio_console.png)
+
+---
+
+### 9. Grafana Observability Portal
+Visualization portal for monitoring API latency, prediction volume, error rates, and feature drift metrics.
+![Grafana UI](evidences/09_grafana_ui.png)
+
+---
+
+### 10. Pipeline Model Evaluation Confusion Matrix
+Confusion matrix visual artifact automatically computed and stored during the model evaluation pipeline step.
+![Confusion Matrix](evidences/10_confusion_matrix.png)
+
