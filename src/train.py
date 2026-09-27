@@ -179,20 +179,9 @@ def promote_best_model(
                     alias=target_stage.lower(),
                     version=target_version
                 )
-                logger.info("Set model alias '%s' -> v%s for %s", target_stage.lower(), target_version, model_name)
+                logger.info("Promoted %s v%s via alias '%s'", model_name, target_version, target_stage.lower())
             except Exception as e:
-                logger.debug("Model alias set error (ignored): %s", e)
-
-            try:
-                client.transition_model_version_stage(
-                    name=model_name,
-                    version=target_version,
-                    stage=target_stage,
-                    archive_existing_versions=True
-                )
-                logger.info("Promoted %s v%s to stage '%s'", model_name, target_version, target_stage)
-            except Exception as e:
-                logger.debug("Stage transition notice: %s", e)
+                logger.warning("Model alias set error: %s", e)
 
             return str(target_version)
         else:

@@ -263,12 +263,6 @@ manager = ModelManager()
 app_start_time = time.time()
 
 
-@app.on_event("startup")
-def startup_event():
-    """Initialize model during server startup."""
-    manager.load_model()
-
-
 @app.middleware("http")
 async def prometheus_metrics_middleware(request: Request, call_next):
     """Intercept HTTP calls and record request metrics."""

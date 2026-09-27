@@ -54,10 +54,10 @@ jobs:
           if-no-files-found: ignore
 
   # ============================================================================
-  # JOB 2: DOCKER CONTAINER BUILDS
+  # JOB 2: DOCKER CONTAINER BUILDS & SMOKE TEST
   # ============================================================================
-  build:
-    name: Build Docker Containers
+  build-and-test:
+    name: Build Docker Containers & Smoke Test
     runs-on: ubuntu-latest
     needs: test
 
@@ -76,21 +76,8 @@ jobs:
         run: |
           docker build -t mlops2-evidently:latest -f evidently_service/Dockerfile evidently_service/
 
-  # ============================================================================
-  # JOB 3: SMOKE TEST & DEPLOYMENT HEALTHCHECK
-  # ============================================================================
-  smoke-test:
-    name: Smoke Test & Deployment Health
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Build and Start API Container
+      - name: Start API Container for Smoke Test
         run: |
-          docker build -t mlops2-api:latest -f api/Dockerfile api/
           docker run -d --name mlops-api -p 8000:8000 mlops2-api:latest
 
       - name: Poll Health Endpoint
