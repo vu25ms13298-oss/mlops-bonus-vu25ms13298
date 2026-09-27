@@ -27,7 +27,6 @@ End-to-end MLOps platform for the **UCI Wine Quality** (red wine) classification
 6. [CI/CD Pipeline](#cicd-pipeline)
 7. [Reproducibility](#reproducibility)
 8. [Quickstart Guide](#quickstart-guide)
-9. [Operational Evidences](#operational-evidences)
 
 ---
 
@@ -262,21 +261,3 @@ docker compose ps
 | MinIO Console | http://localhost:9001 | minioadmin / miniopassword |
 | Airflow | http://localhost:8080 | - |
 
----
-
-## Operational Evidences
-
-All services verified and captured in the [`evidences/`](evidences/) directory:
-
-| Evidence | Component | What it shows |
-|---|---|---|
-| ![FastAPI](evidences/01_fastapi_swagger_docs.png) | FastAPI `:8000` | Swagger UI with `/predict`, `/predict/batch`, `/metrics`, `/health` endpoints |
-| ![Evidently Docs](evidences/02_evidently_service_docs.png) | Evidently `:8001` | OpenAPI spec for capture, analyze, and report endpoints |
-| ![MLflow Experiments](evidences/03_mlflow_experiments.png) | MLflow `:5050` | 10-model experiment matrix with logged params and metrics |
-| ![MLflow Registry](evidences/04_mlflow_model_registry.png) | MLflow Registry | `wine_quality_model` versions with `@production` alias |
-| ![Prometheus Targets](evidences/05_prometheus_targets.png) | Prometheus `:9090` | All scrape targets in `UP` state |
-| ![Prometheus Metrics](evidences/06_prometheus_metrics.png) | Prometheus | `model_predictions_total` time-series query |
-| ![Drift Report](evidences/07_evidently_drift_report.png) | Evidently Report | Statistical drift detected across wine features |
-| ![MinIO](evidences/08_minio_console.png) | MinIO `:9001` | S3 bucket with MLflow artifacts |
-| ![Grafana](evidences/09_grafana_ui.png) | Grafana `:3000` | Monitoring dashboards for latency and drift |
-| ![Confusion Matrix](evidences/10_confusion_matrix.png) | Model Evaluation | Confusion matrix from the best model's test set |
