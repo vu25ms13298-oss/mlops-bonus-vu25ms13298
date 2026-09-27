@@ -161,6 +161,23 @@ To satisfy the rigorous requirements of Assignment 2, an experiment matrix of 10
 - **Rationale:** By limiting tree depth to 5, the model avoids overfitting to the noise in specific alcohol and sulphate measurements, generalizing significantly better than over-parameterized deeper ensembles.
 - **Production Registration:** Automatically tagged as the winner and transitioned to the `Production` stage in the MLflow Model Registry.
 
+### 📸 Visual Evidence: MLflow Experiment Tracking & Governance
+
+#### MLflow Experiment Matrix (All 10 Model Runs)
+![MLflow Experiments Matrix](evidences/03_mlflow_experiments.png)
+*Figure 2.1: Live MLflow tracking server (port 5050) displaying the complete 10-model experiment matrix with parameters, run durations, and validation scores.*
+
+#### MLflow Model Registry & Stage Governance
+![MLflow Model Registry](evidences/04_mlflow_model_registry.png)
+*Figure 2.2: MLflow Model Registry managing versions of `wine_quality_model` and the champion model transitioned to the `@production` alias.*
+
+#### Model Evaluation Confusion Matrix
+<p align="center">
+  <img src="evidences/10_confusion_matrix.png" alt="Confusion Matrix" width="450" />
+  <br>
+  <em>Figure 2.3: Confusion matrix visual artifact automatically computed and stored during model evaluation on the hold-out test set.</em>
+</p>
+
 ---
 
 ## ⚡ Section 3: Workflow Orchestration with Airflow
@@ -197,6 +214,9 @@ graph LR
   - `model_feature_value`: Histogram of feature values observed in production.
 - Dispatches prediction inputs asynchronously to Evidently for real-time drift monitoring.
 
+![FastAPI Swagger UI](evidences/01_fastapi_swagger_docs.png)
+*Figure 4.1: FastAPI interactive Swagger UI (port 8000) documenting production inference and observability endpoints.*
+
 ### 2. Evidently AI Drift Detection Service (`evidently_service/main.py`)
 - Computes statistical drift across incoming prediction windows vs. reference baseline.
 - Real-time Prometheus metrics:
@@ -205,10 +225,31 @@ graph LR
   - `evidently_feature_drift`: Per-feature drift indicator.
 - Automatically archives interactive HTML visual reports accessible at `/reports`.
 
-### 3. Grafana Dashboards
+![Evidently Service Docs](evidences/02_evidently_service_docs.png)
+*Figure 4.2: Evidently AI Service OpenAPI specification (port 8001) for capturing production traffic and triggering drift evaluations.*
+
+![Evidently Drift Report](evidences/07_evidently_drift_report.png)
+*Figure 4.3: Interactive Evidently AI HTML report detecting significant distribution drift on physicochemical wine features.*
+
+### 3. Observability & Monitoring Infrastructure
+
+#### Prometheus Scraping Targets & Real-time Metrics
+![Prometheus Targets](evidences/05_prometheus_targets.png)
+*Figure 4.4: Prometheus scraping targets (port 9090) verifying healthy `UP` state across `api`, `evidently`, and `prometheus`.*
+
+![Prometheus Metrics](evidences/06_prometheus_metrics.png)
+*Figure 4.5: Prometheus time-series query tracking `model_predictions_total` with 247 production inferences recorded.*
+
+#### MinIO S3 Object Storage & Grafana Dashboards
 - Pre-provisioned dashboards loaded automatically on startup:
   - `ml-monitoring.json`: Request throughput, p50/p95/p99 latencies, prediction counts, and error rates.
   - `evidently-drift-monitoring.json`: Drift score timeseries, per-feature drift status, and data quality indicators.
+
+![MinIO Console](evidences/08_minio_console.png)
+*Figure 4.6: MinIO high-performance S3 object storage console (port 9001) for artifact and model storage.*
+
+![Grafana UI](evidences/09_grafana_ui.png)
+*Figure 4.7: Grafana observability portal (port 3000) for real-time monitoring and alerting dashboards.*
 
 ---
 
@@ -290,6 +331,21 @@ docker compose ps
 ## 📸 Section 8: Visual Evidences & Operational Screenshots
 
 All live service components have been rigorously verified and captured in the [`evidences/`](evidences/) directory:
+
+| # | Artifact | Component & Port | Operational Verification Highlights |
+|:---:|:---|:---|:---|
+| 1 | [`01_fastapi_swagger_docs.png`](#1-model-serving-rest-api-fastapi-swagger-docs) | **FastAPI Serving API** (`:8000`) | Production `/predict` & `/predict/batch`, OpenAPI 3.1 docs |
+| 2 | [`02_evidently_service_docs.png`](#2-evidently-ai-drift-monitoring-service-swagger-docs) | **Evidently AI Service** (`:8001`) | Baseline reference management & drift calculation endpoints |
+| 3 | [`03_mlflow_experiments.png`](#3-mlflow-experiment-tracking-runs-table) | **MLflow Tracking Server** (`:5050`) | Complete 10-model experiment matrix logged with metrics |
+| 4 | [`04_mlflow_model_registry.png`](#4-mlflow-model-registry--stage-promotion) | **MLflow Model Registry** | `wine_quality_model` versions and champion `@production` promotion |
+| 5 | [`05_prometheus_targets.png`](#5-prometheus-scraping-targets) | **Prometheus Targets** (`:9090`) | All 3 service targets healthy in `UP` 1/1 state |
+| 6 | [`06_prometheus_metrics.png`](#6-prometheus-live-production-metrics) | **Prometheus Live Metrics** | `model_predictions_total` with 247 real production inferences |
+| 7 | [`07_evidently_drift_report.png`](#7-evidently-ai-interactive-drift-report) | **Evidently HTML Report** | Statistical dataset drift detected via Wasserstein distance |
+| 8 | [`08_minio_console.png`](#8-minio-high-performance-s3-storage-console) | **MinIO S3 Object Storage** (`:9001`) | S3 artifact buckets for MLflow models and pipelines |
+| 9 | [`09_grafana_ui.png`](#9-grafana-observability-portal) | **Grafana Dashboards** (`:3000`) | Observability portal for service latency and throughput |
+| 10 | [`10_confusion_matrix.png`](#10-pipeline-model-evaluation-confusion-matrix) | **Model Evaluation Artifact** | Test set confusion matrix plot generated during pipeline evaluation |
+
+---
 
 ### 1. Model Serving REST API (FastAPI Swagger Docs)
 FastAPI production inference service documentation displaying health checks, single prediction (`/predict`), high-throughput batch prediction (`/predict/batch`), Prometheus `/metrics`, and `/model/info`.
