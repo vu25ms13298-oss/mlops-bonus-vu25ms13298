@@ -43,8 +43,11 @@ htmlcov/
 # Data & Models (ignore large artifacts if needed, keep raw samples)
 data/processed/*.parquet
 data/processed/*.npy
+data/processed/*.joblib
+data/processed/artifacts/
 data/staging/
 mlruns/
 mlartifacts/
 evidently_service/reports/*.html
 evidently_service/reports/*.json
+evidently_service/data/

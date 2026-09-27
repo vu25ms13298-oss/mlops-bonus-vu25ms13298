@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from simulations.scenarios import NormalTrafficScenario, SevereDriftScenario
+from simulations.scenarios import NormalTrafficScenario, SlightDriftScenario, SevereDriftScenario
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("SimulationRunner")
@@ -59,20 +59,35 @@ def main():
 
     time.sleep(1)
 
-    logger.info("=== PHASE 2: Simulating Severe Drift Traffic (60 requests) ===")
-    drifted = SevereDriftScenario(api_url=f"{API_URL}/predict")
-    res2 = drifted.run(count=60, delay_sec=0.01)
-    logger.info("Phase 2 finished: %s", res2)
+    logger.info("=== PHASE 2: Simulating Slight Drift Traffic (50 requests) ===")
+    slight = SlightDriftScenario(api_url=f"{API_URL}/predict")
+    res_slight = slight.run(count=50, delay_sec=0.01)
+    logger.info("Phase 2 finished: %s", res_slight)
 
-    logger.info("Triggering Evidently Analysis (Drifted)...")
+    logger.info("Triggering Evidently Analysis (Slight Drift)...")
     try:
-        drift_res2 = requests.post(f"{EVIDENTLY_URL}/analyze", json={"window_size": 60}, timeout=10).json()
-        logger.info("Evidently Result 2: Drift Detected = %s, Score = %s, Drifted Features = %s",
-                    drift_res2.get("dataset_drift_detected"), drift_res2.get("drift_share"),
-                    drift_res2.get("number_of_drifted_columns"))
-        logger.info("Report generated: %s", drift_res2.get("html_report"))
+        drift_res_slight = requests.post(f"{EVIDENTLY_URL}/analyze", json={"window_size": 50}, timeout=10).json()
+        logger.info("Evidently Result 2: Drift Detected = %s, Score = %s",
+                    drift_res_slight.get("dataset_drift_detected"), drift_res_slight.get("drift_share"))
     except Exception as e:
         logger.warning("Analysis 2 warning: %s", e)
+
+    time.sleep(1)
+
+    logger.info("=== PHASE 3: Simulating Severe Drift Traffic (60 requests) ===")
+    drifted = SevereDriftScenario(api_url=f"{API_URL}/predict")
+    res3 = drifted.run(count=60, delay_sec=0.01)
+    logger.info("Phase 3 finished: %s", res3)
+
+    logger.info("Triggering Evidently Analysis (Severe Drift)...")
+    try:
+        drift_res3 = requests.post(f"{EVIDENTLY_URL}/analyze", json={"window_size": 60}, timeout=10).json()
+        logger.info("Evidently Result 3: Drift Detected = %s, Score = %s, Drifted Features = %s",
+                    drift_res3.get("dataset_drift_detected"), drift_res3.get("drift_share"),
+                    drift_res3.get("number_of_drifted_columns"))
+        logger.info("Report generated: %s", drift_res3.get("html_report"))
+    except Exception as e:
+        logger.warning("Analysis 3 warning: %s", e)
 
 
 if __name__ == "__main__":
